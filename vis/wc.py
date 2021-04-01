@@ -92,7 +92,7 @@ def get_plot():
     # print("aaaaaaaaaaaaaaaaaaqui é:", stopwords_pt)
 
     with open('vis/wc_files/all895897348956.txt','r') as f:
-        wordcloud = WordCloud(stopwords=stopwords_pt, width=700, height=700, max_font_size=150, background_color="white").generate(f.read())
+        wordcloud = WordCloud(stopwords=stopwords_pt, width=800, height=450, max_font_size=150, background_color="white").generate(f.read())
         wordcloud.to_file("vis/wc_files/wc.png")
     # plt.figure(figsize=(30,10))
     # plt.imshow(wordcloud, interpolation='bilinear')

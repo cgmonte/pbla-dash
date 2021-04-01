@@ -124,8 +124,8 @@ def get_fig():
             name = name.split(' ')[0] + " " + name.split(' ')[1][:1] + "."
             users[key] = name
     label_map = users
-    label_map['actor'] = 'Estudante'
-    label_map['event_date'] = 'Data das interações'
+    label_map['actor'] = ''
+    label_map['event_date'] = ''
     label_map['total'] = 'Interações totais (tamanho da circuferência)'
 
     # replaces google user identifiers with real names
@@ -142,7 +142,8 @@ def get_fig():
                  color="actor", 
                  height=500, 
                  labels=users, 
-                 title="Quantidade de interações de estudantes com documentos da equipe ao longo do tempo",
+                #  title="Quantidade de interações de estudantes com documentos da equipe ao longo do tempo",
                 )
-    fig.layout.update(showlegend=False, height=400)
+    fig.layout.update(showlegend=False, height=300, margin=dict(l=0, r=0, t=30, b=0))
+    fig.update_yaxes(automargin=True, visible=True, showticklabels=True)
     return fig

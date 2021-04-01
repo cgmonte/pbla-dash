@@ -26,7 +26,7 @@ engine_gdrive_data_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbl
 
 ############ notebook
 
-turma_to_analyse = 'REQ1001'
+# turma_to_analyse = 'REQ1001'
 
 def get_files_from_turma(turma_tag: str):
     turma_files = dict()
@@ -41,7 +41,7 @@ def get_files_from_turma(turma_tag: str):
 
 
 
-def get_fig():
+def get_fig(turma_to_analyse: str):
     files_turma = get_files_from_turma(turma_to_analyse)
 
     statement = sqlalchemy.text(f'SELECT * FROM "users"')
@@ -125,8 +125,9 @@ def get_fig():
 
     # display(px.colors.qualitative.Antique)
     fig = px.parallel_categories(df,
-                                width=400,
-                                labels={'actor': 'Estudantes', 'target': 'Arquivo'},
-                                title=f"Turma {turma_to_analyse}: Estudantes vs. contribuições em arquivos da disciplina")
-    fig.layout.update(showlegend=False, hovermode='closest', width=400)
+                                width=None,
+                                labels={'actor': 'Estudantes', 'target': 'Arquivo'})
+                                # title=f"Turma {turma_to_analyse}: Estudantes vs. contribuições em arquivos da disciplina")
+    fig.layout.update(showlegend=False, hovermode='closest', height=400, margin=dict(l=50, r=210, t=20, b=30))
+    fig.update_yaxes(automargin=True)
     return fig
