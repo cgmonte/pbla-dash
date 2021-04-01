@@ -16,7 +16,7 @@ import base64
 image_filename = 'vis/wc_files/wc.png'
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
-external_stylesheets = ['app.css']
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, serve_locally = False, external_stylesheets=external_stylesheets, url_base_pathname='/dash/')
 
