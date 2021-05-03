@@ -2,11 +2,11 @@ from datetime import date, datetime
 import yaml
 import requests
 
-import sqlalchemy 
-from sqlalchemy import create_engine
+import sqlalchemy # pylint: disable=import-error
+from sqlalchemy import create_engine # pylint: disable=import-error
 
-import pandas as pd
-import plotly.express as px
+import pandas as pd # pylint: disable=import-error
+import plotly.express as px # pylint: disable=import-error
 
 # display.max_rows and display.max_columns sets the maximum number of rows and columns displayed when a frame is pretty-printed. 
 # Truncated lines are replaced by an ellipsis.
@@ -15,10 +15,12 @@ pd.set_option('display.max_rows', 10)
 # open config file to get credentials and connect to DB
 with open("config.yml", 'r') as ymlfile:
     cfg = yaml.safe_load(ymlfile)
+
 db_username = cfg['db_creds']['user']
 db_pass = cfg['db_creds']['pass']
-engine_gdrive_app_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbla_db_1/micros-gdrive-app")
-engine_gdrive_data_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbla_db_1/micros-gdrive-data")
+engine_gdrive_app_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbla_db_1/db-micros-gdrive")
+# engine_gdrive_app_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbla_db_1/micros-gdrive-app")
+# engine_gdrive_data_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbla_db_1/micros-gdrive-data")
 
 # # update user data
 # url = "http://pbla_gdrive_1/api/integ/gdrive/user/update/records"
@@ -26,32 +28,46 @@ engine_gdrive_data_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbl
 # post = requests.post(url, params=payload)
 # print(post.text)
 
+def timestamp_parser(timestamp):
+    if timestamp[19:][:1] == '.':
+        event_date = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%fZ")
+    elif timestamp[19:][:1] == 'Z':
+        event_date = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
+    return event_date
+
 def get_fig():
-    # get file table names
-    statement = sqlalchemy.text("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';")
-    tables = pd.read_sql_query(statement, con=engine_gdrive_data_db)
-    columns = ['actor','timestamp','date']
-    # index = 1
+
+    tag_turma = 'AS0YVX20211'
+    tag_equipe = 'F4UL'
+    
+    conn = engine_gdrive_app_db.connect()
+    statement_b = sqlalchemy.text(f'SELECT * FROM "users";')
+    db_users = pd.read_sql_query(statement_b, con=conn)
+    conn.close()
+    engine_gdrive_app_db.dispose()
+
+    conn = engine_gdrive_app_db.connect()
+    statement_a = sqlalchemy.text(f"SELECT activity_fields FROM files_records;")
+    # statement_a = sqlalchemy.text(f"SELECT activity_fields FROM files_records WHERE tag_turma = \'{tag_turma}\' AND tag_equipe = \'{tag_equipe}\';")
+    file_records = pd.read_sql_query(statement_a, con=conn)
+    conn.close()
+    engine_gdrive_app_db.dispose()
+   
     df = pd.DataFrame()
 
-    # loop through table names
-    for row in tables.iterrows():
-        tablename = row[1][0]
-        statement = sqlalchemy.text(f"SELECT activity_fields FROM \"{tablename}\"")
-        file_records = pd.read_sql_query(statement, con=engine_gdrive_data_db) # get file records
-        rows_count = len(file_records.index)
-        if not file_records.empty:
-            # loop through file records, get the field 'activity' for each record
-            for row in file_records.iterrows():
-                activity_fields = file_records.at[row[0],"activity_fields"]
-                #loop through a list of events (serveral primaryActionDetail)
-                for event in activity_fields:
-                    event_date = datetime.strptime(event['timestamp'], "%Y-%m-%dT%H:%M:%S.%fZ")
-                    event_date = event_date.date()
-                    event_type = event['actions'][0]['detail']
-                    event_type = list(event_type.keys())
-                    data = {'actor': event['actors'][0]['user']['knownUser']['personName'], 'event_date':event_date, 'event_type': event_type[0]}
-                    df = df.append(pd.DataFrame.from_dict([data]))
+    if not file_records.empty:
+        # loop through file records, get the field 'activity' for each record
+        for row in file_records.iterrows():
+            activity_fields = file_records.at[row[0],"activity_fields"]
+            #loop through a list of events (serveral primaryActionDetail)
+            for event in activity_fields:
+                event_date = timestamp_parser(event['timestamp'])
+                event_date = event_date.date()           
+                event_type = event['actions'][0]['detail']
+                event_type = list(event_type.keys())
+                data = {'actor': event['actors'][0]['user']['knownUser']['personName'], 'event_date':event_date, 'event_type': event_type[0]}
+                df = df.append(pd.DataFrame.from_dict([data]))
+
     df = df.sort_values(by='event_date')
     df = df.set_index('event_date')
 
@@ -59,9 +75,7 @@ def get_fig():
 
     all_dates = []
     all_actors = []
-    actors_for_that_day = []
     data = {}
-    index = 1
     df4 = pd.DataFrame()
     total = 0
 
@@ -108,9 +122,6 @@ def get_fig():
     df4 = df4.set_index('event_date')
 
     #######################3 notebooks
-
-    statement = sqlalchemy.text(f'SELECT * FROM "users"')
-    db_users = pd.read_sql_query(statement, con=engine_gdrive_app_db)
 
     users = dict()
     for row in db_users.iterrows():

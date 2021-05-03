@@ -1,9 +1,9 @@
 import os
 import logging
 
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
+import dash # pylint: disable=import-error
+import dash_core_components as dcc # pylint: disable=import-error
+import dash_html_components as html # pylint: disable=import-error
 
 from vis import global_activity
 from vis import alunos_vs_docs
@@ -33,12 +33,12 @@ app.layout = html.Div(className='main-div',
         # second row
         html.Div(className='second-row',
                 children=[
-                    # 1st column of 2nd row
+                    #1st column of 2nd row
                     html.Div(className='first-col',
                             children=[
                                 html.H4('Estudantes vs. arquivos da turma'),
                                 dcc.Graph(id='parcat', figure=alunos_vs_docs.get_fig('REQ1001'))]),
-                    # 1st column of 2nd row
+                    #1st column of 2nd row
                     html.Div(className='second-col',
                             children=[
                                 html.H4('Wordcloud'),

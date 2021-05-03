@@ -1,9 +1,9 @@
-import pandas as pd
-import sqlalchemy 
-from sqlalchemy import create_engine
+import pandas as pd # pylint: disable=import-error
+import sqlalchemy # pylint: disable=import-error
+from sqlalchemy import create_engine # pylint: disable=import-error
 # import openpyxl
 # import matplotlib.pyplot as plt
-from datetime import date, datetime
+from datetime import date, datetime 
 import yaml
 # import re
 import requests
@@ -11,7 +11,7 @@ import requests
 # import chart_studio.plotly as charsplot
 # import plotly.figure_factory as pff
 # from plotly.offline import iplot
-import plotly.express as px
+import plotly.express as px # pylint: disable=import-error
 
 # pd.set_option('display.max_rows', None)
 # plt.close("all")
@@ -56,7 +56,6 @@ def get_fig(turma_to_analyse: str):
     # tables = pd.read_sql_query(statement, con=engine_gdrive_data_db)
     # tables = tables.loc[tables['tablename'].isin(files_turma)]
 
-    columns = ['actor','timestamp','date']
     df = pd.DataFrame()
     name_vs_id = dict()
 
