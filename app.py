@@ -8,10 +8,13 @@ import dash_html_components as html # pylint: disable=import-error
 from vis import global_activity
 from vis import alunos_vs_docs
 # from vis import wordcloud
+from vis import gateway
 
 import base64   
 
 # wc.get_plot()
+
+
 
 image_filename = 'vis/wc_files/wc.png'
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
@@ -20,17 +23,23 @@ app = dash.Dash(__name__, serve_locally = False, url_base_pathname='/dash/')
 
 server = app.server
 
-tag_turma = 'RI0DBS20211'
+tag_turma = 'PS0AVQ20211'
 tag_equipe = 'F4UL'
+
+names = gateway.get_names(tag_turma=tag_turma, tag_equipe=tag_equipe)
+
+disci = names['Disciplina']
+sem = names['Semestre']
+equipe = names['Equipe']
 
 app.layout = html.Div(className='main-div',
     children=[
         html.H1('Dashboard PBL Analytics'),
-        html.H3(f'Turma: {tag_turma} | Equipe: {tag_equipe}'),
+        html.P(f'Disciplina: {disci} | Semestre: {sem} | Equipe: {equipe}', id='sub'),
         # first row
         html.Div(className='first-row',
                 children=[
-                    html.H4('Quantidade de interações de estudantes com documentos da equipe ao longo do tempo'),   
+                    html.H5('Quantidade de interações de estudantes com documentos da equipe ao longo do tempo'),   
                     html.Div(children=[dcc.Graph(id='bubble', figure=global_activity.get_fig(tag_turma=tag_turma, tag_equipe=tag_equipe))]),
                 ]
         ),
@@ -40,12 +49,12 @@ app.layout = html.Div(className='main-div',
                     #1st column of 2nd row
                     html.Div(className='first-col',
                             children=[
-                                html.H4('Estudantes vs. arquivos da turma'),
+                                html.H5('Estudantes vs. arquivos da turma'),
                                 dcc.Graph(id='parcat', figure=alunos_vs_docs.get_fig(tag_turma=tag_turma, tag_equipe=''))]),
                     #1st column of 2nd row
                     html.Div(className='second-col',
                             children=[
-                                html.H4('Wordcloud'),
+                                html.H5('Wordcloud'),
                                 html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),)])
                 ]
         )
