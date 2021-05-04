@@ -9,7 +9,7 @@ from vis import global_activity
 from vis import alunos_vs_docs
 # from vis import wordcloud
 
-import base64
+import base64   
 
 # wc.get_plot()
 
@@ -20,14 +20,18 @@ app = dash.Dash(__name__, serve_locally = False, url_base_pathname='/dash/')
 
 server = app.server
 
+tag_turma = 'RI0DBS20211'
+tag_equipe = 'F4UL'
+
 app.layout = html.Div(className='main-div',
     children=[
         html.H1('Dashboard PBL Analytics'),
+        html.H3(f'Turma: {tag_turma} | Equipe: {tag_equipe}'),
         # first row
         html.Div(className='first-row',
                 children=[
-                    html.H4('Quantidade de interações de estudantes com documentos da equipe ao longo do tempo'),
-                    html.Div(children=[dcc.Graph(id='bubble', figure=global_activity.get_fig())]),
+                    html.H4('Quantidade de interações de estudantes com documentos da equipe ao longo do tempo'),   
+                    html.Div(children=[dcc.Graph(id='bubble', figure=global_activity.get_fig(tag_turma=tag_turma, tag_equipe=tag_equipe))]),
                 ]
         ),
         # second row
@@ -37,7 +41,7 @@ app.layout = html.Div(className='main-div',
                     html.Div(className='first-col',
                             children=[
                                 html.H4('Estudantes vs. arquivos da turma'),
-                                dcc.Graph(id='parcat', figure=alunos_vs_docs.get_fig('REQ1001'))]),
+                                dcc.Graph(id='parcat', figure=alunos_vs_docs.get_fig(tag_turma=tag_turma, tag_equipe=''))]),
                     #1st column of 2nd row
                     html.Div(className='second-col',
                             children=[

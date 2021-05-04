@@ -1,4 +1,3 @@
-from datetime import date, datetime
 import yaml
 import requests
 
@@ -7,6 +6,7 @@ from sqlalchemy import create_engine # pylint: disable=import-error
 
 import pandas as pd # pylint: disable=import-error
 import plotly.express as px # pylint: disable=import-error
+from vis import parsers
 
 # display.max_rows and display.max_columns sets the maximum number of rows and columns displayed when a frame is pretty-printed. 
 # Truncated lines are replaced by an ellipsis.
@@ -28,17 +28,7 @@ engine_gdrive_app_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbla
 # post = requests.post(url, params=payload)
 # print(post.text)
 
-def timestamp_parser(timestamp):
-    if timestamp[19:][:1] == '.':
-        event_date = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%fZ")
-    elif timestamp[19:][:1] == 'Z':
-        event_date = datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ")
-    return event_date
-
-def get_fig():
-
-    tag_turma = 'AS0YVX20211'
-    tag_equipe = 'F4UL'
+def get_fig(tag_turma: str, tag_equipe: str):
     
     conn = engine_gdrive_app_db.connect()
     statement_b = sqlalchemy.text(f'SELECT * FROM "users";')
@@ -47,8 +37,8 @@ def get_fig():
     engine_gdrive_app_db.dispose()
 
     conn = engine_gdrive_app_db.connect()
-    statement_a = sqlalchemy.text(f"SELECT activity_fields FROM files_records;")
-    # statement_a = sqlalchemy.text(f"SELECT activity_fields FROM files_records WHERE tag_turma = \'{tag_turma}\' AND tag_equipe = \'{tag_equipe}\';")
+    # statement_a = sqlalchemy.text(f"SELECT activity_fields FROM files_records;")
+    statement_a = sqlalchemy.text(f"SELECT activity_fields FROM files_records WHERE tag_turma = \'{tag_turma}\' AND tag_equipe = \'{tag_equipe}\';")
     file_records = pd.read_sql_query(statement_a, con=conn)
     conn.close()
     engine_gdrive_app_db.dispose()
@@ -61,7 +51,7 @@ def get_fig():
             activity_fields = file_records.at[row[0],"activity_fields"]
             #loop through a list of events (serveral primaryActionDetail)
             for event in activity_fields:
-                event_date = timestamp_parser(event['timestamp'])
+                event_date = parsers.timestamp_parser(event['timestamp'])
                 event_date = event_date.date()           
                 event_type = event['actions'][0]['detail']
                 event_type = list(event_type.keys())
