@@ -88,7 +88,14 @@ def get_fig(tag_turma: str, tag_equipe: str):
                     event_date = event_date.date()
                     event_type = event['actions'][0]['detail']
                     event_type = list(event_type.keys())
-                    event_target = event['targets'][0]['driveItem']['name'][6:]
+
+                    if 'driveItem' in event['targets'][0]:
+                        event_target = event['targets'][0]['driveItem']['name'][6:]
+                        # print("DDDDDDDDDDDDDDDDDDDDDDDDDDD driveItem", event_target, flush=True)
+                    elif 'fileComment' in event['targets'][0]:
+                        event_target = event['targets'][0]['fileComment']['parent']['name'][6:]
+                        # print("FFFFFFFFFFFFFFFFFFFFFFFFFFF fileComment", event_target, flush=True)
+                    
                     data = {'actor': event['actors'][0]['user']['knownUser']['personName'], 
                             'target': event_target}
                     df = df.append(pd.DataFrame.from_dict([data]))
