@@ -1,38 +1,54 @@
 .main-div {
-    display: flex;
-    /* flex-wrap: wrap; */
-    justify-content: space-between;
-    align-content: stretch;
-    padding-left: 9%;
-    padding-right: 10%;
-    flex-direction: column;
-}
-
-.first-row {
+    position: fixed;
+    /* background-color: aqua; */
+    top: 0;
+    left: 0;
     width: 100%;
-    margin-bottom: 3%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
 }
 
+.first-row,
 .second-row {
+    /* background-color: blueviolet; */
+    /* margin: 2%; */
     width: 100%;
+    /* height: 50%; */
     display: flex;
-    /* flex-wrap: wrap; */
     flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.first-col {
-    width: 59%;
-    height: 100px;
-    flex: flex-shrink;
+.div1a,
+.div1b,
+.div2a,
+.div2b {
+    /* background-color: burlywood; */
+    /* margin: 2.5%; */
+    height: 100%;
 }
 
-.second-col {
-    width: 39%;
-    display: flex;
-    /* flex-wrap: wrap; */
-    flex-direction: column;
-    flex: auto;
-    padding-left: 2%;
+.div1a {
+    flex-grow: 2;
+}
+
+.div1b {
+    width: 30vh;
+    flex-grow: 1;
+    margin-left: 3vw;
+}
+
+.div2a {
+    flex-grow: 1;
+}
+
+.div2b {
+    flex-grow: 1;
+    margin-left: 3vw;
 }
 
 html {
@@ -44,7 +60,8 @@ h4,
 h5,
 h6 {
     color: #01579B;
-    margin-bottom: 0.2em;
+    margin-bottom: -0.02em;
+    margin-top: -0.02em;
 }
 
 h1,
@@ -53,12 +70,21 @@ h2 {
 }
 
 Img {
-    margin-top: 3%;
-    width: 100%;
-    height: auto;
+    margin-top: 2em;
+    /* width: 100%; */
+    height: 32vh;
 }
 
-#sub {
+#bubble {
+    height: 50vh;
+}
+
+#parcat {
+    height: 50vh;
+}
+
+
+/* #sub {
     margin-top: -1em;
     margin-bottom: 2em;
-}
+} */

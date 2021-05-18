@@ -141,10 +141,9 @@ def get_fig(tag_turma: str, tag_equipe: str):
                  y="actor", 
                  size="total", 
                  color="actor", 
-                 height=500, 
                  labels=users, 
                 #  title="Quantidade de interações de estudantes com documentos da equipe ao longo do tempo",
                 )
-    fig.layout.update(showlegend=False, height=300, margin=dict(l=0, r=0, t=30, b=0))
-    fig.update_yaxes(automargin=True, visible=True, showticklabels=True)
+    fig.layout.update(showlegend=False)
+    fig.update_yaxes(visible=True, showticklabels=True)
     return fig

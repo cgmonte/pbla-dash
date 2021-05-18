@@ -26,46 +26,42 @@ server = app.server
 tag_turma = 'GP0TGS20211'
 tag_equipe = 'F4UL'
 
-app.layout = html.Div(className='main-div',
-                      children=[
-                          dcc.Location(id='url', refresh=False),
-                          # html.Div(id='page-content'),
-                          html.H1('Dashboard PBL Analytics'),
-                          html.P(id='p_sub'),
-                          # first row
-                          html.Div(className='first-row',
-                                   children=[
-                                       html.H5(
-                                           'Quantidade de interações de estudantes com documentos da equipe ao longo do tempo'),
-                                       html.Div(id='div_bubble'),
-                                   ]
-                                   ),
-                          # second row
-                          html.Div(className='second-row',
-                                   children=[
-                                       # 1st column of 2nd row
-                                       html.Div(id='div_parcat', className='first-col',
-                                                children=[
-                                                    html.H5(
-                                                        'Estudantes vs. arquivos da turma'),
-                                                    html.Div(id='subdiv_parcat')]),
-                                       # 1st column of 2nd row
-                                       html.Div(className='second-col',
-                                                children=[
-                                                    html.H5('Wordcloud'),
-                                                    html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),)])
-                                   ]
-                                   )
-                      ]
-                      )
+app.layout = html.Div(className='main-div', children=[
+                dcc.Location(id='url', refresh=False),
+                html.Div(className='first-row', children=[
+                    html.Div(className='div1a', children=[
+                        html.H5('Quantidade de interações de estudantes com documentos da equipe ao longo do tempo'),
+                        html.Div(id='div_bubble')
+                        ]),
+                                    
+                        html.Div(className='div1b', children=[
+                            html.H5('Visualização Discord'),
+                            html.Div(id='div_discord')
+                            ]),
+                ]
+                ),
+                html.Div(className='second-row', children=[
+                    html.Div(className='div2a', children=[
+                            html.H5('Estudantes vs. arquivos da turma'),
+                            html.Div(id='subdiv_parcat')
+                            ]),
+                        # 1st column of 2nd row
+                    html.Div(className='div2b', children=[
+                            html.H5('Wordcloud'),
+                            html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()),)
+                            ])
+                ]
+                )
+    ]
+)
 
 
-@app.callback(dash.dependencies.Output('div_bubble', 'children'),
+@ app.callback(dash.dependencies.Output('div_bubble', 'children'),
               [dash.dependencies.Input('url', 'pathname')])
 def display_bubble(pathname):
 
-    pathname = pathname[6:]
-    tag_turma, tag_equipe = pathname.split('/')
+    pathname=pathname[6:]
+    tag_turma, tag_equipe=pathname.split('/')
 
     # print(tag_turma, tag_equipe, flush=True)
 
@@ -73,35 +69,35 @@ def display_bubble(pathname):
         tag_turma=tag_turma, tag_equipe=tag_equipe))])
 
 
-@app.callback(dash.dependencies.Output('subdiv_parcat', 'children'),
+@ app.callback(dash.dependencies.Output('subdiv_parcat', 'children'),
               [dash.dependencies.Input('url', 'pathname')])
 def display_parcat(pathname):
 
-    pathname = pathname[6:]
-    tag_turma, tag_equipe = pathname.split('/')
+    pathname=pathname[6:]
+    tag_turma, tag_equipe=pathname.split('/')
 
     return html.Div(children=[dcc.Graph(id='parcat', figure=alunos_vs_docs.get_fig(
         tag_turma=tag_turma, tag_equipe=''))])
 
-@app.callback(dash.dependencies.Output('p_sub', 'children'),
-              [dash.dependencies.Input('url', 'pathname')])
-def display_subtitle(pathname):
+# @ app.callback(dash.dependencies.Output('p_sub', 'children'),
+#               [dash.dependencies.Input('url', 'pathname')])
+# def display_subtitle(pathname):
 
-    pathname = pathname[6:]
-    tag_turma, tag_equipe = pathname.split('/')
+#     pathname=pathname[6:]
+#     tag_turma, tag_equipe=pathname.split('/')
 
-    names = gateway.get_names(tag_turma=tag_turma, tag_equipe=tag_equipe)
+#     names=gateway.get_names(tag_turma=tag_turma, tag_equipe=tag_equipe)
 
-    disci = names['Disciplina']
-    sem = names['Semestre'] 
-    equipe = names['Equipe']
+#     disci=names['Disciplina']
+#     sem=names['Semestre']
+#     equipe=names['Equipe']
 
-    return html.P(f'Disciplina: {disci} | Semestre: {sem} | Equipe: {equipe}', id='sub')
+#     return html.P(f'Disciplina: {disci} | Semestre: {sem} | Equipe: {equipe}', id='sub')
 
 if __name__ == '__main__':
     app.run_server(debug=True)
 
 if __name__ != '__main__':
-    gunicorn_logger = logging.getLogger('gunicorn.debug')
-    app.logger.handlers = gunicorn_logger.handlers
+    gunicorn_logger=logging.getLogger('gunicorn.debug')
+    app.logger.handlers=gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
