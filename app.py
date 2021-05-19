@@ -5,8 +5,7 @@ import dash  # pylint: disable=import-error
 import dash_core_components as dcc  # pylint: disable=import-error
 import dash_html_components as html  # pylint: disable=import-error
 
-from vis import global_activity
-from vis import alunos_vs_docs
+from vis import global_activity, discord_qtde, alunos_vs_docs
 from vis import wc
 from vis import gateway
 
@@ -45,9 +44,7 @@ app.layout = html.Div(className='main-div', children=[
             # html.H5('Estudantes vs. arquivos da turma'),
             html.Div(id='subdiv_parcat')
         ]),
-        # 1st column of 2nd row
-        html.Div(className='div2b', children=[
-            html.Div(id='div_discord'),
+        html.Div(className='div2b', children=[dcc.Graph(style={'width': '100%', 'height': '100%'}, config={'responsive': True}, responsive='auto', id='parcat', figure=discord_qtde.get_fig()),
             # html.H5('Wordcloud'),
             
         ])

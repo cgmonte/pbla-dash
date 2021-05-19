@@ -132,7 +132,7 @@ def get_fig(tag_turma: str, tag_equipe: str):
     # display(px.colors.qualitative.Antique)
     fig = px.parallel_categories(df,
                                 width=None,
-                                labels={'actor': 'Estudantes', 'target': 'Arquivo'},
+                                labels={'actor': 'Estudantes', 'target': 'Documentos'},
                                 title=f"Estudantes vs. documentos da disciplina",
                                 )
     fig.layout.update(showlegend=False, hovermode='closest', margin=dict(r=210))

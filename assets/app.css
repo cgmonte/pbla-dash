@@ -42,12 +42,14 @@ html {
 }
 
 .div2a {
-    flex-grow: 2;
+    flex-grow: 1;
     margin-right: 2vw;
+    /* padding-bottom: 2vh; */
 }
 
 .div2b {
     flex-grow: 1;
+    /* padding-bottom: 2vh; */
 }
 
 h3,
