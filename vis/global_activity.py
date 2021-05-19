@@ -142,8 +142,16 @@ def get_fig(tag_turma: str, tag_equipe: str):
                  size="total", 
                  color="actor", 
                  labels=users, 
-                #  title="Quantidade de interações de estudantes com documentos da equipe ao longo do tempo",
+                 title="Contribuições a documentos da equipe ao longo do tempo",
                 )
     fig.layout.update(showlegend=False)
     fig.update_yaxes(visible=True, showticklabels=True)
+    fig.update_layout(
+        margin=dict(l=0, t=26, b=0, r=0),
+        title_font_family="Roboto",
+        title_font_color="#01579B",
+        font_size=10,
+        paper_bgcolor="whitesmoke",
+        autosize = True,
+    )
     return fig

@@ -89,14 +89,13 @@ def get_plot():
     for word in text:
         stopwords_pt.append(word)
     stopwords_pt = set(stopwords_pt)
-    # print("aaaaaaaaaaaaaaaaaaqui é:", stopwords_pt)
 
     with open('vis/wc_files/all895897348956.txt','r') as f:
-        wordcloud = WordCloud(stopwords=stopwords_pt, width=800, height=450, max_font_size=150, background_color="white").generate(f.read())
+        wordcloud = WordCloud(stopwords=stopwords_pt, width=800, height=450, max_font_size=150, background_color="whitesmoke").generate(f.read())
         wordcloud.to_file("vis/wc_files/wc.png")
     # plt.figure(figsize=(30,10))
     # plt.imshow(wordcloud, interpolation='bilinear')
     # plt.axis("off")
     # plt.show()
 
-get_plot()
+# get_plot()

@@ -133,10 +133,19 @@ def get_fig(tag_turma: str, tag_equipe: str):
     fig = px.parallel_categories(df,
                                 width=None,
                                 labels={'actor': 'Estudantes', 'target': 'Arquivo'},
-                                # title=f"Turma {tag_turma}: Estudantes vs. contribuições em arquivos da disciplina",
+                                title=f"Estudantes vs. documentos da disciplina",
                                 )
     fig.layout.update(showlegend=False, hovermode='closest', margin=dict(r=210))
     fig.update_yaxes(automargin=True)
-    
+
+    fig.update_layout(
+        margin=dict(l=30, t=26, b=10, r=150),
+        title_font_family="Roboto",
+        title_font_color="#01579B",
+        font_size=10,
+        paper_bgcolor="whitesmoke",
+        autosize = True,
+    )
+
     return fig
     # return tag_turma
