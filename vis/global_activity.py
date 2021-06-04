@@ -30,7 +30,7 @@ engine_gdrive_app_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbla
 
 def get_fig(tag_turma: str, tag_equipe: str):
 
-    # integrantes = gateway.get_integrantes(tag_equipe=tag_equipe)
+    integrantes = gateway.get_integrantes(tag_equipe=tag_equipe)
 
     # for integrante in integrantes['user']:
     #     gateway.update_gdrive_records(integrante)
