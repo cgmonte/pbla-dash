@@ -20,6 +20,7 @@ def get_fig():
     statement = sqlalchemy.text(f"SELECT * FROM discord_message_log")
     messages = pd.read_sql_query(statement, con=connection)
     contagem = messages['author'].value_counts()
+    # print(contagem, flush=True)
     fig = px.bar(contagem,
                  labels={'value': 'Mensagens', 'index': 'Estudante'},
                  title=f"Quantidade de mensagens enviadas no Discord",

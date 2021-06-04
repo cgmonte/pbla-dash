@@ -10,9 +10,9 @@ from vis import wc
 from vis import gateway
 
 import base64
-from dash.dependencies import Input, Output
+# from dash.dependencies import Input, Output, State
+import json
 
-# wc.get_plot()
 
 
 image_filename = 'vis/wc_files/wc.png'
@@ -22,11 +22,17 @@ app = dash.Dash(__name__, serve_locally=False, url_base_pathname='/dash/')
 
 server = app.server
 
-tag_turma = 'GP0TGS20211'
-tag_equipe = 'F4UL'
+external_css = [
+    "https://fonts.googleapis.com/css?family=Roboto|Lato",
+]
+
+for css in external_css:
+    app.css.append_css({"external_url": css})
 
 app.layout = html.Div(className='main-div', children=[
     dcc.Location(id='url', refresh=False),
+    # html.Div(id='pseudo_div'),
+    # dcc.Store(id='preload-state'),
     html.Div(className='first-row', children=[
         html.Div(className='div1a', children=[
             html.Div(id='div_bubble')
@@ -44,25 +50,57 @@ app.layout = html.Div(className='main-div', children=[
             # html.H5('Estudantes vs. arquivos da turma'),
             html.Div(id='subdiv_parcat')
         ]),
-        html.Div(className='div2b', children=[dcc.Graph(style={'width': '100%', 'height': '100%'}, config={'responsive': True}, responsive='auto', id='parcat', figure=discord_qtde.get_fig()),
+        html.Div(className='div2b', children=[html.Div(id='div_discord_count'),
             # html.H5('Wordcloud'),
-            
         ])
     ]
     )
 ]
 )
 
-external_css = [
-    "https://fonts.googleapis.com/css?family=Roboto|Lato",
-]
+# @app.callback(dash.dependencies.Output('preload-state', 'data'), 
+#              [dash.dependencies.Input('url', 'pathname')])
+# def update_data(pathname):
+#     state_dict = dict()
 
-for css in external_css:
-    app.css.append_css({"external_url": css})
+#     pathname = pathname[6:]
+#     tag_turma, tag_equipe = pathname.split('/')
+
+#     integrantes = gateway.get_integrantes(tag_equipe=tag_equipe)
+    
+#     # some expensive clean data step    
+#     integrantes = gateway.get_integrantes(tag_equipe=tag_equipe)
+#     for integrante in integrantes['user']:
+#         print("                       integrante:", integrante, flush=True)
+#         gateway.update_gdrive_records(integrante)
+
+#     state_dict['tag_turma'] = tag_turma
+#     state_dict['tag_equipe'] = tag_equipe
+#     state_dict['uptodate'] = True
+
+#      # more generally, this line would be
+#      # json.dumps(cleaned_df)
+#     return json.dumps(state_dict)
+
+# @ app.callback(dash.dependencies.Output('pseudo_div', 'children'),
+#                [dash.dependencies.Input('url', 'pathname')])
+# def update_records(pathname):
+
+#     pathname = pathname[6:]
+#     tag_turma, tag_equipe = pathname.split('/')
+
+#     integrantes = gateway.get_integrantes(tag_equipe=tag_equipe)
+
+#     # for integrante in integrantes['user']:
+#     #     print("                       integrante:", integrante, flush=True)
+#     #     gateway.update_gdrive_records(integrante)
+
+#     return html.Div()
 
 
 @ app.callback(dash.dependencies.Output('div_bubble', 'children'),
-               [dash.dependencies.Input('url', 'pathname')])
+             [dash.dependencies.Input('url', 'pathname')])
+            #    [dash.dependencies.Input('preload-state', 'state_data')])
 def display_bubble(pathname):
 
     pathname = pathname[6:]
@@ -70,19 +108,56 @@ def display_bubble(pathname):
 
     # print(tag_turma, tag_equipe, flush=True)
 
-    return html.Div(className="return_div", children=[dcc.Graph(style={'width': '100%', 'height': '100%'}, config={'responsive': True}, responsive='auto', id='bubble', figure=global_activity.get_fig(
-        tag_turma=tag_turma, tag_equipe=tag_equipe))])
+    # state_data = json.loads(state_data)
+    # tag_turma = state_data['tag_turma']
+    # tag_equipe = state_data['tag_equipe']
+    # state_dict = state_data['state_dict']
+
+    return html.Div(className="return_div", children=[dcc.Graph(
+        style={'width': '100%', 'height': '100%'}, 
+        config={'responsive': True}, 
+        responsive='auto', 
+        id='bubble', 
+        figure=global_activity.get_fig(tag_turma=tag_turma, tag_equipe=tag_equipe)
+        )])
 
 
 @ app.callback(dash.dependencies.Output('subdiv_parcat', 'children'),
-               [dash.dependencies.Input('url', 'pathname')])
+             [dash.dependencies.Input('url', 'pathname')])
+            #    [dash.dependencies.Input('preload_state', 'state_data')])
 def display_parcat(pathname):
 
     pathname = pathname[6:]
     tag_turma, tag_equipe = pathname.split('/')
 
-    return html.Div(className="return_div", children=[dcc.Graph(style={'width': '100%', 'height': '100%'}, config={'responsive': True}, responsive='auto', id='parcat', figure=alunos_vs_docs.get_fig(
-        tag_turma=tag_turma, tag_equipe=''))])
+    # state_data = json.loads(state_data)
+    # tag_turma = state_data['tag_turma']
+    # tag_equipe = state_data['tag_equipe']
+    # state_dict = state_data['state_dict']
+
+    return html.Div(className="return_div", children=[dcc.Graph(
+        style={'width': '100%', 'height': '100%'}, 
+        config={'responsive': True}, 
+        responsive='auto', 
+        id='parcat', 
+        figure=alunos_vs_docs.get_fig(tag_turma=tag_turma, tag_equipe='')
+        )])
+    
+
+@ app.callback(dash.dependencies.Output('div_discord_count', 'children'),
+               [dash.dependencies.Input('url', 'pathname')])
+def display_discord_bars(pathname):
+
+    pathname = pathname[6:]
+    tag_turma, tag_equipe = pathname.split('/')
+
+    # print(tag_turma, tag_equipe, flush=True)
+
+    return html.Div(className="return_div", children=[dcc.Graph(
+            style={'width': '100%', 'height': '100%'}, 
+            config={'responsive': True}, 
+            responsive='auto', id='parcat', 
+            figure=discord_qtde.get_fig())])
 
 
 if __name__ == '__main__':
