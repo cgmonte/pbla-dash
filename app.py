@@ -38,20 +38,17 @@ app.layout = html.Div(className='main-div', children=[
             html.Div(id='div_bubble')
         ]),
 
-        html.Div(className='div1b', children=[
-            html.P('Nuvem de palavras de documentos do Google Drive', className="native_title_fake"),
-            html.Img(
-                src='data:image/png;base64,{}'.format(encoded_image.decode()),)
-        ]),
-    ]
-    ),
-    html.Div(className='second-row', children=[
         html.Div(className='div2a', children=[
             # html.H5('Estudantes vs. arquivos da turma'),
             html.Div(id='subdiv_parcat')
         ]),
         html.Div(className='div2b', children=[html.Div(id='div_discord_count'),
             # html.H5('Wordcloud'),
+        ]),
+        html.Div(className='div1b', children=[
+            html.P('Nuvem de palavras de documentos do Google Drive', className="native_title_fake"),
+            html.Img(
+                src='data:image/png;base64,{}'.format(encoded_image.decode()),)
         ])
     ]
     )
