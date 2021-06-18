@@ -8,6 +8,7 @@ from sqlalchemy import create_engine
 import textract
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 import requests
+from collections import Counter
 
 # pd.set_option('display.max_rows', None)
 plt.close("all")
@@ -17,27 +18,34 @@ with open("config.yml", 'r') as ymlfile:
 db_username = cfg['db_creds']['user']
 db_pass = cfg['db_creds']['pass']
 
-engine_gdrive_app_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbla_db_1/micros-gdrive-app")
-engine_gdrive_data_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbla_db_1/micros-gdrive-data")
+engine_gdrive_app_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbla_db_1/db-micros-discord")
 
-# url = "http://pbla_gdrive_1/api/integ/gdrive/user/update/records"
-# payload = {'user_id': 1}
-# post = requests.post(url, params=payload)
-# print(post.text)
+connection = engine_gdrive_app_db.connect()
 
-# def get_extension(original_mimetype: str):
+def get_fig():
+    statement = sqlalchemy.text(f"SELECT * FROM discord_message_log")
+    messages = pd.read_sql_query(statement, con=connection)
 
-#     mimetypes = {'application/vnd.google-apps.document': '.docx', 
-#                 'application/vnd.google-apps.spreadsheet': '.xlsx', 
-#                 'application/vnd.google-apps.presentation': '.pptx'}
+    new_word_list = ' '.join([i for i in messages['message']]).split()
 
-#     if original_mimetype in mimetypes:
-#         converted_mimetype = mimetypes[f'{original_mimetype}']
-#         return converted_mimetype
 
-#     return False
+    # print(new_word_list, flush=True)
 
-def get_plot():
+    stopwords_pt = []
+    with open('vis/wc_files/stopwords.txt','r') as f:
+        text = f.read()
+        text = text.split()
+    for word in text:
+        stopwords_pt.append(word)
+    stopwords_pt = set(stopwords_pt)
+    
+
+    wordcloud = WordCloud(stopwords=stopwords_pt, width=800, height=450, max_font_size=150, background_color="whitesmoke").generate(new_word_list)
+    wordcloud.to_file("vis/wc_files/wc.png")
+
+    # return new_word_list
+
+# def get_plot():
 #     statement = sqlalchemy.text("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema';")
 #     tables = pd.read_sql_query(statement, con=engine_gdrive_data_db)
 #     df = pd.DataFrame()
@@ -82,17 +90,17 @@ def get_plot():
 #             af.close
 
     # composição de um set de stopwords que serão retiradas da wordcloud final
-    stopwords_pt = []
-    with open('vis/wc_files/stopwords.txt','r') as f:
-        text = f.read()
-        text = text.split()
-    for word in text:
-        stopwords_pt.append(word)
-    stopwords_pt = set(stopwords_pt)
+    # stopwords_pt = []
+    # with open('vis/wc_files/stopwords.txt','r') as f:
+    #     text = f.read()
+    #     text = text.split()
+    # for word in text:
+    #     stopwords_pt.append(word)
+    # stopwords_pt = set(stopwords_pt)
 
-    with open('vis/wc_files/all895897348956.txt','r') as f:
-        wordcloud = WordCloud(stopwords=stopwords_pt, width=800, height=450, max_font_size=150, background_color="whitesmoke").generate(f.read())
-        wordcloud.to_file("vis/wc_files/wc.png")
+    # with open('vis/wc_files/all895897348956.txt','r') as f:
+    #     wordcloud = WordCloud(stopwords=stopwords_pt, width=800, height=450, max_font_size=150, background_color="whitesmoke").generate(f.read())
+    #     wordcloud.to_file("vis/wc_files/wc.png")
     # plt.figure(figsize=(30,10))
     # plt.imshow(wordcloud, interpolation='bilinear')
     # plt.axis("off")

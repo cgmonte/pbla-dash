@@ -29,12 +29,11 @@ engine_gdrive_app_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbla
 # print(post.text)
 
 def get_fig(tag_turma: str, tag_equipe: str):
-
     integrantes = gateway.get_integrantes(tag_equipe=tag_equipe)
 
     # for integrante in integrantes['user']:
     #     gateway.update_gdrive_records(integrante)
-            
+    
     conn = engine_gdrive_app_db.connect()
     where_conditions = parsers.where_conditions(integrantes)
     statement_b = sqlalchemy.text(f'SELECT * FROM "users" WHERE {where_conditions};')
@@ -43,7 +42,11 @@ def get_fig(tag_turma: str, tag_equipe: str):
     engine_gdrive_app_db.dispose()
     
     conn = engine_gdrive_app_db.connect()
-    statement_a = sqlalchemy.text(f"SELECT activity_fields FROM files_records WHERE tag_turma = \'{tag_turma}\' AND tag_equipe = \'{tag_equipe}\';")
+    if tag_turma != 'all':
+        statement_a = sqlalchemy.text(f"SELECT activity_fields FROM files_records WHERE tag_turma = \'{tag_turma}\' AND tag_equipe = \'{tag_equipe}\';")
+    else:
+        statement_a = sqlalchemy.text(f"SELECT activity_fields FROM files_records WHERE tag_equipe = \'{tag_equipe}\';")
+
     file_records = pd.read_sql_query(statement_a, con=conn)
     conn.close()
     engine_gdrive_app_db.dispose()

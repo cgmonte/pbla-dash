@@ -20,12 +20,18 @@ html {
 .div2b {
     background-color: whitesmoke;
     box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.19);
-    padding-right: 1em;
-    padding-top: 1em;
-    padding-bottom: 1em;
-    padding-left: 0;
+    padding-right: 2em;
+    padding-top: 2em;
+    padding-bottom: 2em;
+    padding-left: 2em;
     margin-bottom: 1em;
 }
+
+
+/* .div1b {
+    padding: 2em;
+    padding-top: 1em;
+} */
 
 h3,
 h4,

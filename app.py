@@ -46,9 +46,10 @@ app.layout = html.Div(className='main-div', children=[
             # html.H5('Wordcloud'),
         ]),
         html.Div(className='div1b', children=[
-            html.P('Nuvem de palavras de documentos do Google Drive', className="native_title_fake"),
+            html.P('Nuvem de palavras de mensagens do Discord', className="native_title_fake"),
             html.Img(
-                src='data:image/png;base64,{}'.format(encoded_image.decode()),)
+                src='data:image/png;base64,{}'.format(encoded_image.decode()),),
+            # html.Div(wc.get_fig())
         ])
     ]
     )
@@ -127,6 +128,9 @@ def display_parcat(pathname):
     pathname = pathname[6:]
     tag_turma, tag_equipe = pathname.split('/')
 
+    # print("app.py", tag_turma, tag_equipe)
+
+
     # state_data = json.loads(state_data)
     # tag_turma = state_data['tag_turma']
     # tag_equipe = state_data['tag_equipe']
@@ -137,7 +141,7 @@ def display_parcat(pathname):
         config={'responsive': True}, 
         responsive='auto', 
         id='parcat', 
-        figure=alunos_vs_docs.get_fig(tag_turma=tag_turma, tag_equipe='')
+        figure=alunos_vs_docs.get_fig(tag_turma=tag_turma, tag_equipe=tag_equipe)
         )])
     
 

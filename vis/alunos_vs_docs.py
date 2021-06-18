@@ -18,7 +18,6 @@ engine_gdrive_app_db = create_engine(f"postgresql://{db_username}:{db_pass}@pbla
 
 
 def get_files_from_equipe(tag_equipe: str):
-
     conn = engine_gdrive_app_db.connect()
     statement_a = sqlalchemy.text(f"SELECT driveapi_fileid FROM files_records WHERE tag_equipe = \'{tag_equipe}\';")
     file_records = pd.read_sql_query(statement_a, con=conn)
@@ -30,11 +29,10 @@ def get_files_from_equipe(tag_equipe: str):
     for row in file_records.iterrows():
 
         equipe_file_set.add(row[1]['driveapi_fileid'])
-
     return equipe_file_set
 
-def get_files_from_turma(tag_turma: str):
 
+def get_files_from_turma(tag_turma: str):
     conn = engine_gdrive_app_db.connect()
     statement_a = sqlalchemy.text(f"SELECT driveapi_fileid FROM files_records WHERE tag_turma = \'{tag_turma}\';")
     file_records = pd.read_sql_query(statement_a, con=conn)
@@ -49,9 +47,13 @@ def get_files_from_turma(tag_turma: str):
 
     return turma_file_set
 
-
 def get_fig(tag_turma: str, tag_equipe: str):
-    files_turma = get_files_from_turma(tag_turma=tag_turma)
+    if tag_turma == 'all':
+        files_to_get = get_files_from_equipe(tag_equipe=tag_equipe)
+        # print("         tag_turma == 'all':", "tag_equipe =", tag_equipe, "files_to_get =", files_to_get)
+    else:
+        files_to_get = get_files_from_turma(tag_turma=tag_turma)
+        # print("         tag_turma =", tag_turma, "tag_equipe =", tag_equipe, "files_to_get =", files_to_get)
 
     statement = sqlalchemy.text(f'SELECT * FROM "users"')
     db_users = pd.read_sql_query(statement, con=engine_gdrive_app_db)
@@ -59,8 +61,7 @@ def get_fig(tag_turma: str, tag_equipe: str):
     df = pd.DataFrame()
     name_vs_id = dict()
 
-    for file in files_turma:
-
+    for file in files_to_get:
         statement = sqlalchemy.text(f'SELECT file_fields FROM files_records WHERE driveapi_fileid = \'{file}\' ORDER BY sequencial DESC LIMIT 1;')
         latest = pd.read_sql_query(statement, con=engine_gdrive_app_db)
         if not latest.empty:
@@ -128,15 +129,25 @@ def get_fig(tag_turma: str, tag_equipe: str):
     # replaces google file ids with file names
     for file_id in name_vs_id:
         df = df.replace(file_id, name_vs_id[file_id])
+    
+    # creates a column with number for each unique actor
+    # this will be used for the color parameter in parcat
+    unique_number_map = dict()
+    for i, unique in enumerate(df['actor'].unique()):
+        unique_number_map[unique] = i
+    df['map'] = df.apply(lambda row: unique_number_map[row['actor']], axis=1)
 
-    # display(px.colors.qualitative.Antique)
     fig = px.parallel_categories(df,
+                                color = 'map',
+                                dimensions = ['actor', 'target'],
                                 width=None,
+                                height=600,
                                 labels={'actor': 'Estudantes', 'target': 'Documentos'},
                                 title=f"Estudantes vs. documentos da disciplina",
                                 )
     fig.layout.update(showlegend=False, hovermode='closest', margin=dict(r=210))
     fig.update_yaxes(automargin=True)
+    fig.update(layout_coloraxis_showscale=False)
 
     fig.update_layout(
         margin=dict(l=30, t=40, b=10, r=150),
@@ -148,4 +159,3 @@ def get_fig(tag_turma: str, tag_equipe: str):
     )
 
     return fig
-    # return tag_turma
