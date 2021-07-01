@@ -15,8 +15,8 @@ import json
 
 
 
-image_filename = 'vis/wc_files/wc.png'
-encoded_image = base64.b64encode(open(image_filename, 'rb').read())
+# image_filename = 'vis/wc_files/wc.png'
+# encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 app = dash.Dash(__name__, serve_locally=False, url_base_pathname='/dash/')
 
@@ -48,14 +48,14 @@ app.layout = html.Div(className='main-div', children=[
         html.Div(className='div1b', children=[
             html.P('Nuvem de palavras de mensagens do Discord', className="native_title_fake"),
             html.Img(
-                src='data:image/png;base64,{}'.format(encoded_image.decode()),),
+                src='data:image/png;base64,{}'.format(wc.get_fig().decode()),),
             # html.Div(wc.get_fig())
         ])
     ]
     )
 ]
 )
-
+# wc.get_fig()
 # @app.callback(dash.dependencies.Output('preload-state', 'data'), 
 #              [dash.dependencies.Input('url', 'pathname')])
 # def update_data(pathname):
