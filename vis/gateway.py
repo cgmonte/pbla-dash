@@ -29,6 +29,6 @@ def get_integrantes(tag_equipe: int):
 def update_gdrive_records(pbla_uid: int):
 	url = f"http://pbla_gdrive_1/api/integ/gdrive/user/update/records?user_id={pbla_uid}"
 	response = requests.post(url)
-	print(response)
+	# print(response)
 	return response.status_code
 
