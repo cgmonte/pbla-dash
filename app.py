@@ -88,9 +88,9 @@ def display_discord_bars(pathname):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
 
 if __name__ != '__main__':
-    gunicorn_logger = logging.getLogger('gunicorn.debug')
+    gunicorn_logger = logging.getLogger('gunicorn.info')
     app.logger.handlers = gunicorn_logger.handlers
     app.logger.setLevel(gunicorn_logger.level)
